@@ -3,6 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="1_o5qli"]
 [ext_resource type="Script" uid="uid://co8fiwpwroqdm" path="res://scenes/camera.gd" id="2_0wfyh"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0wfyh"]
+
 [node name="Main" type="Node3D" unique_id=1707068833]
 
 [node name="ProtoController" parent="." unique_id=1841671251 instance=ExtResource("1_o5qli")]
@@ -20,28 +22,35 @@ use_collision = true
 
 [node name="ground" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1454138752]
 transform = Transform3D(100, 0, 0, 0, 1, 0, 0, 0, 100, 0, 0, 0)
+material = SubResource("StandardMaterial3D_0wfyh")
 
 [node name="walls" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1799755468]
 transform = Transform3D(5, 0, 0, 0, 3, 0, 0, 0, 1, 0, 1.829936, 0)
+material = SubResource("StandardMaterial3D_0wfyh")
 
 [node name="walls2" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1606410059]
 transform = Transform3D(5, 0, 0, 0, 3, 0, 0, 0, 1, 7, 1.829936, -10)
+material = SubResource("StandardMaterial3D_0wfyh")
 
 [node name="walls3" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1067413117]
 transform = Transform3D(-2.1855696e-07, 0, -1.0000001, 0, 3, 0, 5, 0, -4.371139e-08, 0, 1.829936, -8)
+material = SubResource("StandardMaterial3D_0wfyh")
 
 [node name="cube" type="CSGBox3D" parent="CSGCombiner3D" unique_id=635454346]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1, -4)
+material = SubResource("StandardMaterial3D_0wfyh")
 
 [node name="cube2" type="CSGBox3D" parent="CSGCombiner3D" unique_id=1662714389]
 transform = Transform3D(1, 0, 0, 0, 0.5, 0, 0, 0, 1, 6, 0.73756295, -5)
+material = SubResource("StandardMaterial3D_0wfyh")
 
 [node name="cube3" type="CSGBox3D" parent="CSGCombiner3D" unique_id=253017912]
 transform = Transform3D(1, 0, 0, 0, 0.25, 0, 0, 0, 1, 6, 0.63756293, -6)
+material = SubResource("StandardMaterial3D_0wfyh")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=10323791]
 transform = Transform3D(-0.8124224, -0.29994988, -0.5, -0.18301299, -0.68301266, 0.70710677, -0.55360293, 0.6659758, 0.5, -7.4, 23.4, 20.7)
-light_color = Color(1, 1, 0.8980392, 1)
+light_energy = 0.8
 shadow_enabled = true
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=2125777743]

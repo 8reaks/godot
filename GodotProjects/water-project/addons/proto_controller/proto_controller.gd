@@ -20,11 +20,11 @@ extends CharacterBody3D
 ## Look around rotation speed.
 @export var look_speed : float = 0.002
 ## Normal speed.
-@export var base_speed : float = 5.0
+@export var base_speed : float = 4.0
 ## Speed of jump.
 @export var jump_velocity : float = 4.5
 ## How fast do we run?
-@export var sprint_speed : float = 8.0
+@export var sprint_speed : float = 6.0
 ## How fast do we freefly?
 @export var freefly_speed : float = 25.0
 
@@ -48,6 +48,8 @@ var mouse_captured : bool = false
 var look_rotation : Vector2
 var move_speed : float = 0.0
 var freeflying : bool = false
+var fire_rate: float = 0.1
+var fire_timer: float = 0.0
 
 ## IMPORTANT REFERENCES
 @onready var head: Node3D = $Head
@@ -76,7 +78,28 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			disable_freefly()
 
+func fire_bullet():
+	var bullet_scene = load("res://addons/bullet/bullet.tscn")
+	if bullet_scene:
+		var bullet = bullet_scene.instantiate()
+		get_tree().get_root().add_child(bullet)
+		var direction = -head.global_basis.z
+		var angle_spread = deg_to_rad(2.0)
+		var angle = randf_range(-angle_spread, angle_spread)
+		var axis = Vector3.UP
+		var random_axis = Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1)).normalized()
+		direction = direction.rotated(random_axis, angle)
+		bullet.global_position = head.global_position + direction * 0.5
+		bullet.set_direction(direction)
+
 func _physics_process(delta: float) -> void:
+	# Fire bullet while holding left mouse button
+	if mouse_captured and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		fire_timer -= delta
+		if fire_timer <= 0:
+			fire_bullet()
+			fire_timer = fire_rate
+	
 	# If freeflying, handle freefly and nothing else
 	if can_freefly and freeflying:
 		var input_dir := Input.get_vector(input_left, input_right, input_forward, input_back)
@@ -88,7 +111,8 @@ func _physics_process(delta: float) -> void:
 	# Apply gravity to velocity
 	if has_gravity:
 		if not is_on_floor():
-			velocity += get_gravity() * delta
+			# Apply stronger gravity for faster falling (reduces air time)
+			velocity += get_gravity() * delta * 1.5
 
 	# Apply jumping
 	if can_jump:
@@ -105,19 +129,30 @@ func _physics_process(delta: float) -> void:
 	if can_move:
 		var input_dir := Input.get_vector(input_left, input_right, input_forward, input_back)
 		var move_dir := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-		if move_dir:
-			velocity.x = move_dir.x * move_speed
-			velocity.z = move_dir.z * move_speed
+		
+		# Calculate acceleration and deceleration rates based on whether we're on ground or in air
+		var accel_rate: float
+		var decel_rate: float
+		
+		if is_on_floor():
+			# High acceleration and deceleration on ground for responsive movement
+			accel_rate = move_speed * 30.0
+			decel_rate = move_speed * 25.0
 		else:
-			# Different deceleration rates for ground and air
-			if is_on_floor():
-				# Faster deceleration on ground
-				velocity.x = move_toward(velocity.x, 0, move_speed)
-				velocity.z = move_toward(velocity.z, 0, move_speed)
-			else:
-				# Slower deceleration in air (air resistance)
-				velocity.x = move_toward(velocity.x, 0, move_speed * 0.3)
-				velocity.z = move_toward(velocity.z, 0, move_speed * 0.3)
+			# Limited air control - slower acceleration and deceleration in air
+			accel_rate = move_speed * 3.0
+			decel_rate = move_speed * 1.0
+		
+		if move_dir:
+			# Gradually accelerate toward target speed
+			var target_velocity_x = move_dir.x * move_speed
+			var target_velocity_z = move_dir.z * move_speed
+			velocity.x = move_toward(velocity.x, target_velocity_x, accel_rate * delta)
+			velocity.z = move_toward(velocity.z, target_velocity_z, accel_rate * delta)
+		else:
+			# Gradually decelerate to zero
+			velocity.x = move_toward(velocity.x, 0, decel_rate * delta)
+			velocity.z = move_toward(velocity.z, 0, decel_rate * delta)
 	else:
 		velocity.x = 0
 		velocity.y = 0
