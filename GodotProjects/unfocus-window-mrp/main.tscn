@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://dl00mykx83gwk"]
+
+[ext_resource type="Theme" uid="uid://bu4f0stukmndx" path="res://window_theme.tres" id="1_ig7tw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2tori"]
+bg_color = Color(0, 0, 0, 0.3647059)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0f6s4"]
+bg_color = Color(0.20995575, 0.6206976, 0.9682365, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+expand_margin_left = 8.0
+expand_margin_top = 32.0
+expand_margin_right = 8.0
+expand_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h03yt"]
+bg_color = Color(0.92572916, 0.4026243, 0.49168015, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+expand_margin_left = 8.0
+expand_margin_top = 32.0
+expand_margin_right = 8.0
+expand_margin_bottom = 8.0
+
+[sub_resource type="Theme" id="Theme_ig7tw"]
+Panel/styles/panel = SubResource("StyleBoxFlat_2tori")
+Window/styles/embedded_border = SubResource("StyleBoxFlat_0f6s4")
+Window/styles/embedded_unfocused_border = SubResource("StyleBoxFlat_h03yt")
+
+[node name="Main" type="Node" unique_id=2042691291]
+
+[node name="W1" type="Window" parent="." unique_id=204564348]
+transparent_bg = true
+oversampling_override = 1.0
+title = "W1"
+position = Vector2i(25, 36)
+transparent = true
+theme = ExtResource("1_ig7tw")
+
+[node name="Panel" type="Panel" parent="W1" unique_id=1168803672]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="W2" type="Window" parent="." unique_id=2008019462]
+transparent_bg = true
+oversampling_override = 1.0
+title = "W2"
+position = Vector2i(150, 36)
+transparent = true
+theme = ExtResource("1_ig7tw")
+
+[node name="Panel" type="Panel" parent="W2" unique_id=1352256558]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="W3" type="Window" parent="." unique_id=2113208655]
+transparent_bg = true
+oversampling_override = 1.0
+title = "W3"
+position = Vector2i(275, 36)
+transparent = true
+theme = SubResource("Theme_ig7tw")
+
+[node name="Panel" type="Panel" parent="W3" unique_id=1922995520]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="W4" type="Window" parent="." unique_id=1628127546]
+transparent_bg = true
+oversampling_override = 1.0
+title = "W4"
+position = Vector2i(400, 36)
+transparent = true
+theme = ExtResource("1_ig7tw")
+
+[node name="Panel" type="Panel" parent="W4" unique_id=1849449766]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
