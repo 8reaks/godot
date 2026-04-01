@@ -9,6 +9,9 @@ albedo_color = Color(0.91806, 0.575202, 0.222449, 1)
 radius = 0.4
 height = 1.8
 
+[sub_resource type="BoxMesh" id="BoxMesh_g2uji"]
+size = Vector3(0.2, 0.2, 1)
+
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_iof21"]
 radius = 0.4
 height = 1.8
@@ -28,3 +31,9 @@ shape = SubResource("CapsuleShape3D_iof21")
 
 [node name="Head" type="Node3D" parent="." unique_id=1415728696]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+
+[node name="Gun" type="MeshInstance3D" parent="Head" unique_id=26570619]
+transform = Transform3D(0.9920444, 0, 0.1258885, 0, 1, 0, -0.1258885, 0, 0.9920444, 0.25786996, -0.32975085, -0.8152898)
+material_override = SubResource("StandardMaterial3D_iof21")
+cast_shadow = 0
+mesh = SubResource("BoxMesh_g2uji")

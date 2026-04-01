@@ -50,9 +50,11 @@ var move_speed : float = 0.0
 var freeflying : bool = false
 var fire_rate: float = 0.1
 var fire_timer: float = 0.0
+var pending_mouse_motion: Vector2 = Vector2.ZERO  # Accumulated mouse motion for physics frame processing
 
 ## IMPORTANT REFERENCES
 @onready var head: Node3D = $Head
+@onready var gun: MeshInstance3D = $Head/Gun
 @onready var collider: CollisionShape3D = $Collider
 
 func _ready() -> void:
@@ -67,9 +69,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if Input.is_key_pressed(KEY_ESCAPE):
 		release_mouse()
 	
-	# Look around
+	# Accumulate mouse motion for processing in _physics_process
 	if mouse_captured and event is InputEventMouseMotion:
-		rotate_look(event.relative)
+		pending_mouse_motion += event.relative
 	
 	# Toggle freefly mode
 	if can_freefly and Input.is_action_just_pressed(input_freefly):
@@ -83,16 +85,22 @@ func fire_bullet():
 	if bullet_scene:
 		var bullet = bullet_scene.instantiate()
 		get_tree().get_root().add_child(bullet)
-		var direction = -head.global_basis.z
+		var direction = -gun.global_basis.z
 		var angle_spread = deg_to_rad(2.0)
 		var angle = randf_range(-angle_spread, angle_spread)
-		var axis = Vector3.UP
 		var random_axis = Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1)).normalized()
 		direction = direction.rotated(random_axis, angle)
-		bullet.global_position = head.global_position + direction * 0.5
+		var gun_length = 1.0
+		var gun_tip_position = gun.global_position + direction * (gun_length / 2)
+		bullet.global_position = gun_tip_position
 		bullet.set_direction(direction)
 
 func _physics_process(delta: float) -> void:
+	# Process accumulated mouse motion in physics frame for synchronized rotation and position
+	if pending_mouse_motion != Vector2.ZERO:
+		rotate_look(pending_mouse_motion)
+		pending_mouse_motion = Vector2.ZERO
+
 	# Fire bullet while holding left mouse button
 	if mouse_captured and Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		fire_timer -= delta
@@ -165,13 +173,20 @@ func _physics_process(delta: float) -> void:
 ## Base of controller rotates around y (left/right). Head rotates around x (up/down).
 ## Modifies look_rotation based on rot_input, then resets basis and rotates by look_rotation.
 func rotate_look(rot_input : Vector2):
-	look_rotation.x -= rot_input.y * look_speed
+	# Calculate angle offsets from mouse movement
+	# Convert pixel movement to radians based on look_speed
+	var pitch_angle = -rot_input.y * look_speed
+	var yaw_angle = -rot_input.x * look_speed
+	
+	# Update rotation values
+	look_rotation.x += pitch_angle
 	look_rotation.x = clamp(look_rotation.x, deg_to_rad(-85), deg_to_rad(85))
-	look_rotation.y -= rot_input.x * look_speed
-	transform.basis = Basis()
-	rotate_y(look_rotation.y)
-	head.transform.basis = Basis()
-	head.rotate_x(look_rotation.x)
+	look_rotation.y += yaw_angle
+	
+	# Directly apply rotations without smoothing
+	# This ensures mouse movements are immediately reflected in the view
+	transform.basis = Basis.from_euler(Vector3(0, look_rotation.y, 0))
+	head.transform.basis = Basis.from_euler(Vector3(look_rotation.x, 0, 0))
 
 
 func enable_freefly():
